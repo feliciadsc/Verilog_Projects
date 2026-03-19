@@ -1,0 +1,6 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/Proiecte_Verilog/AXI_Stream/axi_stream.srcs/sources_1/new/axi_fifo.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module axi_fifo
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/Proiecte_Verilog/AXI_Stream/axi_stream.srcs/sim_1/new/axi_fifo_tb.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module axi_fifo_tb
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/Proiecte_Verilog/AXI_Stream/axi_stream.sim/sim_1/behav/xsim/glbl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module glbl
