@@ -1,20 +1,23 @@
-## 3-Stage Pipelined Pixel Processor (Verilog)
+# AXI4-Stream Synchronous FIFO (Infinity Fabric Style)
 
-This project implements a streaming pixel processor optimized for high-frequency operation. The module converts raw RGB data (8-bit per channel) into a Grayscale value using a 3-stage pipeline architecture. This design mirrors the computational units found in modern GPU architectures, where throughput is prioritized.
+## Overview
+This project implements a Synchronous FIFO (First-In-First-Out) buffer utilizing the industry-standard **AXI4-Stream** protocol. It serves as a fundamental building block for data transport infrastructures, where robust flow control is mandatory.
 
-## Hardware Architecture
-The design is fragmented into three execution stages to minimize the critical path and maximize the clock frequency (Fmax):
-1. **Stage 1 (Input Latching):** Buffering incoming RGB signals to stabilize the data.
-2. **Stage 2 (Arithmetic):** Calculating the sum (R+G+B) using a 10-bit register to prevent overflow.
-3. **Stage 3 (Normalization):** Performing division via bit-shifting (`>> 2`) and registering the final output.
+## Technical Specifications
+* **Protocol:** AXI4-Stream (Slave & Master interfaces).
+* **Handshaking:** Full implementation of `TVALID` and `TREADY` signals.
+* **Storage:** 16-deep circular buffer (parameterized).
+* **Target Device:** Xilinx Spartan-7 (XC7S25CSGA324-2).
 
 
 
-## Key Features & Optimizations
-* **Pipelining:** Introduces a 2-cycle latency but maintains a 1-pixel/cycle throughput.
-* **Overflow Protection:** 10-bit intermediate sum handling ensures no data loss during addition.
-* **Area Efficiency:** Replaced costly hardware dividers with zero-cost bit-shifting for power-of-two division.
-* **Synchronous Design:** Fully synchronous logic aligned to the rising edge of the clock (`posedge clk`).
+## Design Highlights
+* **Backpressure Management:** The FIFO automatically de-asserts `s_axis_tready` when full, signaling the source to stall and preventing data loss.
+* **Circular Buffer Logic:** Managed via read/write pointers with an extra bit for unambiguous Full/Empty state detection.
+* **Zero-Latency Ready:** The `tready` signal reacts instantly to the internal state, ensuring maximum bus utilization.
 
-## Simulation & Verification
-Verified using a Behavioral Testbench in **AMD Vivado**. The simulation confirms that the correct grayscale value appears at the output exactly 2 clock cycles after input, demonstrating perfect register synchronization.
+## Testbench Scenarios
+The included testbench verifies three critical corner cases:
+1. **Backpressure Test:** Writing 16+ values to observe the `tready` drop (Stall condition).
+2. **Empty Read:** Attempting to read from an empty FIFO to verify `tvalid` remains low.
+3. **Continuous Throughput:** Simultaneous read/write operations at maximum clock speed.
